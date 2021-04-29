@@ -33,5 +33,18 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         }
 
         await browser.close();
+
+        markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, authorization)
     });
+}
+
+function markAsVisited(exerciseID: string, authorization: string) {
+    axios.request({
+        method: 'POST',
+        url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
+        headers: {
+            'user-agent': 'new_user_agent-huawei-142',
+            Authorization: `Bearer ${authorization}`,
+        }
+    })
 }
