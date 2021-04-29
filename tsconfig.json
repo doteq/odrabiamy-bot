@@ -6,7 +6,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["discord.js"]
   },
   "exclude": [
     "node_modules"
