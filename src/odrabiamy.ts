@@ -20,8 +20,9 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         const browser = await launch({timeout: 100000});
         const page = await browser.newPage();
         await page.setViewport({width: 1920, height: 1});
-        await page.setContent(decodeURI(solution));
-        await page.waitForTimeout(1000)
+        console.log(decodeURI(solution))
+        await page.setContent(decodeURI(solution), {waitUntil: 'networkidle0'}); // zamiast waitfortimeout
+        //await page.waitForTimeout(1000)
         const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
         await page.setViewport({width: 1920, height: bodyHeight});
         const screenshot = await page.screenshot({fullPage: true})
