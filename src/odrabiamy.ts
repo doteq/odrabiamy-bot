@@ -17,10 +17,17 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
             ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
             : response.data.data[0].solution;
 
+        const excercise_number = exerciseDetails.exerciseID 
+            ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].number
+            : response.data.data[0].number;
+
+        const page_number = exerciseDetails.page
+        
         const browser = await puppeteer.launch({timeout: 100000});
         const page = await browser.newPage();
         await page.setViewport({width: 780, height: 1});
         let decoded_solution = decodeURI(solution)
+        decoded_solution = `<h1> ${excercise_number}/${page_number} </h1>` + decoded_solution
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
         console.log(decoded_solution)
         const loaded = page.waitForNavigation({waitUntil: 'load'});
