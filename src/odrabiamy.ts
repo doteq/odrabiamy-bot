@@ -27,7 +27,8 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         const page = await browser.newPage();
         await page.setViewport({width: 780, height: 1});
         let decoded_solution = decodeURI(solution)
-        decoded_solution = `<h1> ${excercise_number}/${page_number} </h1>` + decoded_solution
+        decoded_solution = `<h1 style="font-size:40;"> ${excercise_number}/${page_number} </h1>` + decoded_solution
+        decoded_solution = '<style>html * {font-size: 20px;line-height: 1.625;font-family: MulishVariable,sans-serif;}</style>' + decoded_solution
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
         console.log(decoded_solution)
         const loaded = page.waitForNavigation({waitUntil: 'load'});
