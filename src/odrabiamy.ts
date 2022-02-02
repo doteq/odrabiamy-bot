@@ -21,13 +21,11 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         const page = await browser.newPage();
         await page.setViewport({width: 780, height: 1});
         let decoded_solution = decodeURI(solution)
-        // decoded_solution = decoded_solution.replaceAll('<hr>', '')
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
         console.log(decoded_solution)
         const loaded = page.waitForNavigation({waitUntil: 'load'});
         await page.setContent(decoded_solution, {waitUntil: 'networkidle0'});
-        await loaded // zamiast waitfortimeout
-        //await page.waitForTimeout(1000)
+        await loaded
         const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
         const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
         await page.setViewport({width: bodyWidth, height: bodyHeight});
