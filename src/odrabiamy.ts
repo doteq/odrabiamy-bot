@@ -17,7 +17,7 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
             ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
             : response.data.data[0].solution;
 
-        const browser = await launch({timeout: 100000});
+        const browser = await puppeteer.launch({timeout: 100000});
         const page = await browser.newPage();
         await page.setViewport({width: 1920, height: 1});
         console.log(decodeURI(solution))
