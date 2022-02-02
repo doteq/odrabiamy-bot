@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { launch } from 'puppeteer';
+import puppeteer from 'puppeteer'
 import { ExerciseDetails, apiSolution } from "./types";
 
 export default function getExerciseImage(exerciseDetails: ExerciseDetails, authorization: string): Promise<Buffer | null> {
