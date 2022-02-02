@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { launch } from 'puppeteer';
+import puppeteer from 'puppeteer'
 import { ExerciseDetails, apiSolution } from "./types";
 
 export default function getExerciseImage(exerciseDetails: ExerciseDetails, authorization: string): Promise<Buffer | null> {
@@ -17,13 +17,18 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
             ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
             : response.data.data[0].solution;
 
-        const browser = await launch({timeout: 100000});
+        const browser = await puppeteer.launch({timeout: 100000});
         const page = await browser.newPage();
-        await page.setViewport({width: 1920, height: 1});
-        await page.setContent(decodeURI(solution));
-        await page.waitForTimeout(1000)
+        await page.setViewport({width: 780, height: 1});
+        let decoded_solution = decodeURI(solution)
+        decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
+        console.log(decoded_solution)
+        const loaded = page.waitForNavigation({waitUntil: 'load'});
+        await page.setContent(decoded_solution, {waitUntil: 'networkidle0'});
+        await loaded
         const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
-        await page.setViewport({width: 1920, height: bodyHeight});
+        const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
+        await page.setViewport({width: bodyWidth, height: bodyHeight});
         const screenshot = await page.screenshot({fullPage: true})
 
         if (Buffer.isBuffer(screenshot)) {
