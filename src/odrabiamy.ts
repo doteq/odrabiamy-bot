@@ -30,7 +30,6 @@ export default function getExerciseImage(exerciseDetails: ExerciseDetails, autho
         decoded_solution = `<h1 style="font-size:30;"> ${excercise_number}/${page_number} </h1>` + decoded_solution
         decoded_solution = '<style>html * {font-family: MulishVariable,sans-serif;}</style>' + decoded_solution
         decoded_solution = decoded_solution.replaceAll(/<object class="math small".*?>/g, '')
-        console.log(decoded_solution)
         const loaded = page.waitForNavigation({waitUntil: 'load'});
         await page.setContent(decoded_solution, {waitUntil: 'networkidle0'});
         await loaded
