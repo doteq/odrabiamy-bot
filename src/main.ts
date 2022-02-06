@@ -6,7 +6,7 @@ import config from './config'
 
 const client = new Client();
 
-export function ready() {
+export function ready(): void {
     console.log(`Logged in as ${client.user?.tag}`)
 }
 

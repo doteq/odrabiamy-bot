@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["es2021", "DOM"],
     "target": "es5",
     "module": "commonjs",
     "declaration": true,
