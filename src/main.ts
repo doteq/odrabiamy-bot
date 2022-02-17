@@ -47,6 +47,27 @@ client.on('message', async (message: Message) => {
                 })
         }
 
+    } else if (message.content.includes('!split')) {
+        const response = await axios.request({
+            method: 'GET',
+            url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
+            headers: {
+                'user-agent': 'new_user_agent-huawei-142',
+                Authorization: `Bearer ${config.odrabiamyAuth}`
+            }
+        });
+        for (let num = 0; num < response.data.data.length; num++) {
+                const solution = response.data.data[num].solution;
+                const excercise_number = response.data.data[num].number;
+                const page_number = exerciseDetails.page
+                const solutionScreenshot = await request(solution, excercise_number, page_number)
+                markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
+                if (!solutionScreenshot) break;
+            
+                await message.channel.send({
+                    files: [solutionScreenshot],
+                })
+        }
     } else {
         const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
         
