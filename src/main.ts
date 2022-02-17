@@ -1,5 +1,5 @@
 import { Client, Message } from 'discord.js';
-import { ExerciseDetails } from "./types";
+import { apiSolution, ExerciseDetails } from "./types";
 import odrabiamy from './odrabiamy';
 import fullpage from './fullpage'
 
@@ -35,18 +35,53 @@ client.on('message', async (message: Message) => {
             }
         });
         for (let num = 0; num < response.data.data.length; num++) {
-                const solution = response.data.data[num].solution;
-                const excercise_number = response.data.data[num].number;
-                const page_number = exerciseDetails.page
-                const solutionScreenshot = await request(solution, excercise_number, page_number)
-                markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
-                if (!solutionScreenshot) break;
-            
-                await message.channel.send({
-                    files: [solutionScreenshot],
-                })
+            let solution = response.data.data[num].solution;
+            solution = decodeURI(solution)
+            const excercise_number = response.data.data[num].number;
+            const page_number = exerciseDetails.page
+            const solutionScreenshot = await request(solution, excercise_number, page_number)
+            markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
+            if (!solutionScreenshot) break;
+        
+            await message.channel.send({
+                files: [solutionScreenshot],
+            })
         }
 
+    } else if (message.content.includes('!split')) {
+        const response = await axios.request({
+            method: 'GET',
+            url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
+            headers: {
+                'user-agent': 'new_user_agent-huawei-142',
+                Authorization: `Bearer ${config.odrabiamyAuth}`
+            }
+        });
+
+        let solution = exerciseDetails.exerciseID
+        ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].solution
+        : response.data.data[0].solution;
+        solution = decodeURI(solution)
+
+        const excercise_number = exerciseDetails.exerciseID 
+            ? response.data.data.filter((sol: apiSolution) => sol.id.toString() === exerciseDetails.exerciseID)[0].number
+            : response.data.data[0].number;
+
+        const page_number = exerciseDetails.page
+
+        const subsection = solution.split('<hr>')
+
+        for (const element of subsection){
+            const solutionScreenshot = await request(element, excercise_number, page_number)
+            markAsVisited(exerciseDetails.exerciseID ? exerciseDetails.exerciseID : response.data.data[0].id, config.odrabiamyAuth);
+            if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+    
+            await message.channel.send({
+                files: [solutionScreenshot],
+            })
+        }
+
+        
     } else {
         const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
         
