@@ -8,7 +8,7 @@ $ npm install
 $ npm run build
 $ node ./dist/main.js
 ```
-Po poprawnym skonfigurowaniu i uruchomieniu bota wystarczy wysłać adres url zadania na kanał podany wcześniej w pliku config, a bot odeśle pełne rozwiązanie.
+Po poprawnym skonfigurowaniu i uruchomieniu bota wystarczy wysłać adres url zadania na kanał podany wcześniej w pliku config, a bot odeśle pełne rozwiązanie. Możesz też napisać ``!str`` przed adresem url żeby bot odesłał rozwiązania z całej strony
 
 ## Ostrzeżenie
 Korzystanie z API serwisu odrabiamy.pl przez zewnętrzne programy jest możliwe wyłącznie za zgodą administracji. Użytkownik bierze na siebie całą odpowiedzialność przy korzystaniu z projektu.
