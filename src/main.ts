@@ -30,6 +30,8 @@ client.on('message', async (message: Message) => {
     await message.channel.send({
         files: [solutionScreenshot],
     })
+
+    setTimeout(() => message.delete(), 5000);
 })
 
 client.login(config.token)
