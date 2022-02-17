@@ -1,8 +1,10 @@
 import { Client, Message } from 'discord.js';
 import { ExerciseDetails } from "./types";
 import odrabiamy from './odrabiamy';
+import fullpage from './fullpage'
 
 import config from './config'
+import axios from 'axios';
 
 const client = new Client();
 
@@ -23,18 +25,62 @@ client.on('message', async (message: Message) => {
         exerciseID: urlArgs[4]?.split('-')[1],
     }
 
-    const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
+    if (message.content.includes('!str')) {
+        const response = await axios.request({
+            method: 'GET',
+            url: `https://odrabiamy.pl/api/v2/exercises/page/premium/${exerciseDetails.page}/${exerciseDetails.bookID}`,
+            headers: {
+                'user-agent': 'new_user_agent-huawei-142',
+                Authorization: `Bearer ${config.odrabiamyAuth}`
+            }
+        });
+        for (let num = 0; num < response.data.data.length; num++) {
+                const solution = response.data.data[num].solution;
+                const excercise_number = response.data.data[num].number;
+                const page_number = exerciseDetails.page
+                const solutionScreenshot = await request(solution, excercise_number, page_number)
+                markAsVisited(response.data.data[num].id, config.odrabiamyAuth);
+                if (!solutionScreenshot) break;
+            
+                await message.channel.send({
+                    files: [solutionScreenshot],
+                })
+        }
 
-    if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+    } else {
+        const solutionScreenshot: Buffer | null = await odrabiamy(exerciseDetails, config.odrabiamyAuth);
+        
+            if (!solutionScreenshot) return message.channel.send('Wystąpił błąd przy pobieraniu zadania');
+        
+            await message.channel.send({
+                files: [solutionScreenshot],
+            })
+    }
 
-    await message.channel.send({
-        files: [solutionScreenshot],
-    })
-
-    setTimeout(() => message.delete(), 5000);
+    try {
+        message.delete()
+    } catch (error) {
+        console.log('message delete failed')
+    }
 })
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function request(solution: string, excercise_number: string, page_number: string,){
+
+    const solutionScreenshot: Buffer | null = await fullpage(solution, excercise_number, page_number);
+    return solutionScreenshot;
+}
 
 client.login(config.token)
 
-
+function markAsVisited(exerciseID: string, authorization: string) {
+    axios.request({
+        method: 'POST',
+        url: `https://odrabiamy.pl/api/v2/exercises/${exerciseID}/visited`,
+        headers: {
+            'user-agent': 'new_user_agent-huawei-142',
+            Authorization: `Bearer ${authorization}`,
+        }
+    })
+}
 
