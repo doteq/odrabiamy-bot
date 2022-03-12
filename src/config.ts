@@ -4,4 +4,5 @@ export default {
         ''
     ],
     odrabiamyAuth: '' // Odrabiamy.pl API v2 authorization token
-}
+}token auth w src/config
+
