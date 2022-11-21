@@ -1,3 +1,5 @@
+#### Repozytorium jest zarchiwizowane i nie będzie dłużej rozwijane. Aktualnie rozwijany fork znajdziesz na https://github.com/m1chaelbarry/odrabiamy-bot
+
 # odrabiamy-bot
 odrabiamy-bot to Discordowy klient serwisu odrabiamy.pl
 
